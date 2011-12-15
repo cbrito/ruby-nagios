@@ -74,6 +74,7 @@ opts = GetoptLong.new(
     [ '--notify-disabled', GetoptLong::NO_ARGUMENT],
     [ '--for-host', GetoptLong::REQUIRED_ARGUMENT],
     [ '--with-service', GetoptLong::REQUIRED_ARGUMENT],
+    [ '--service-status', GetoptLong::REQUIRED_ARGUMENT],
     [ '--enable-notify', GetoptLong::NO_ARGUMENT],
     [ '--disable-notify', GetoptLong::NO_ARGUMENT],
     [ '--enable-checks', GetoptLong::NO_ARGUMENT],
@@ -86,6 +87,7 @@ statusfile = "status.log"
 listhosts = false
 withservice = []
 listservices = false
+servicestatus = false
 forhost = []
 notify = nil
 action = nil
@@ -100,6 +102,8 @@ begin
                 listhosts = true
             when "--list-services"
                 listservices = true
+            when "--service-status"
+                  servicestatus = true
             when "--with-service"
                 withservice << arg
             when "--for-host"
@@ -146,4 +150,11 @@ services = nagios.find_services(options)
 
 puts services.join("\n")
 
+require 'pp'
+
+if servicestatus
+  puts withservice 
+  puts nagios.status["hosts"][forhost[0]]["servicestatus"][withservice[0]]["current_state"] 
+  puts nagios.status["hosts"][forhost[0]]["servicestatus"][withservice[0]]["plugin_output"]
+end
 # vi:tabstop=4:expandtab:ai
